@@ -1,0 +1,43 @@
+# scripts/trading_activity.py
+
+import requests
+import pandas as pd
+
+def fetch_trading_activity(api_url, crypto_symbol, address):
+    """
+    Fetch trading activity from an API.
+    
+    :param api_url: Base URL of the cryptocurrency API
+    :param crypto_symbol: Symbol of the cryptocurrency to fetch trading activity for
+    :param address: Address to fetch trading activity for
+    :return: DataFrame with trading activity data
+    """
+    response = requests.get(f'{api_url}/trading_activity/{crypto_symbol}/{address}')
+    response.raise_for_status()
+    data = response.json()
+    df = pd.DataFrame(data)
+    return df
+
+def analyze_trading_activity(df):
+    """
+    Analyze trading activity data.
+    
+    :param df: DataFrame with trading activity data
+    :return: Analysis results as DataFrame
+    """
+    analysis = {
+        'total_trades': df.shape[0],
+        'total_volume': df['amount'].sum(),
+        'average_trade_size': df['amount'].mean()
+    }
+    analysis_df = pd.DataFrame([analysis])
+    return analysis_df
+
+# Example usage:
+# api_url = 'https://api.crypto.example.com'
+# crypto_symbol = 'BTC'
+# address = '0xabcdef1234567890'
+# trading_activity_df = fetch_trading_activity(api_url, crypto_symbol, address)
+# print(trading_activity_df)
+# trading_activity_analysis_df = analyze_trading_activity(trading_activity_df)
+# print(trading_activity_analysis_df)
